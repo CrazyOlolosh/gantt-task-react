@@ -179,13 +179,13 @@ export const Calendar: React.FC<CalendarProps> = ({
         topValue = `${getLocaleMonth(date, locale)}, ${date.getFullYear()}`;
       }
       // bottom
-      const bottomValue = `W${getWeekNumberISO8601(date)}`;
+      const bottomValue = `Н${getWeekNumberISO8601(date)}`;
 
       bottomValues.push(
         <text
           key={date.getTime()}
           y={headerHeight * 0.8}
-          x={columnWidth * (i + +rtl)}
+          x={columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
         >
           {bottomValue}

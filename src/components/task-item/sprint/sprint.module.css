@@ -1,0 +1,13 @@
+.sprintWrapper {
+  cursor: default;
+  outline: none;
+}
+
+.sprintBackground {
+  user-select: none;
+  opacity: 0.6;
+}
+
+.sprintTop {
+  user-select: none;
+}

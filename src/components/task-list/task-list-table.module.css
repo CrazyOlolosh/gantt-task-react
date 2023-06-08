@@ -1,7 +1,6 @@
 .taskListWrapper {
   display: table;
-  border-bottom: #e6e4e4 1px solid;
-  border-left: #e6e4e4 1px solid;
+  border: #e6e4e4 1px solid;
 }
 
 .taskListTableRow {

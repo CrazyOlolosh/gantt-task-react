@@ -27,8 +27,8 @@ import styles from "./gantt.module.css";
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
   headerHeight = 50,
-  columnWidth = 60,
-  listCellWidth = "155px",
+  columnWidth = 70,
+  listCellWidth = "200px",
   rowHeight = 50,
   ganttHeight = 0,
   viewMode = ViewMode.Day,
@@ -36,10 +36,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   locale = "en-GB",
   barFill = 60,
   barCornerRadius = 3,
-  barProgressColor = "#a3a3ff",
-  barProgressSelectedColor = "#8282f5",
-  barBackgroundColor = "#b8c2cc",
-  barBackgroundSelectedColor = "#aeb8c2",
+  barProgressColor = "#916fe7",
+  barProgressSelectedColor = "#7a51e1",
+  barBackgroundColor = "#d0c1f5",
+  barBackgroundSelectedColor = "#a286ea",
   projectProgressColor = "#7db59a",
   projectProgressSelectedColor = "#59a985",
   projectBackgroundColor = "#fac465",
@@ -48,12 +48,13 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   milestoneBackgroundSelectedColor = "#f29e4c",
   rtl = false,
   handleWidth = 8,
-  timeStep = 300000,
-  arrowColor = "grey",
+  timeStep = 86400000, /// 1 day
+  arrowColor = "green",
   fontFamily = "Arial, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
   fontSize = "14px",
   arrowIndent = 20,
   todayColor = "rgba(252, 248, 227, 0.5)",
+  weekendColor = "transparent",
   viewDate,
   TooltipContent = StandardTooltipContent,
   TaskListHeader = TaskListHeaderDefault,
@@ -107,6 +108,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       filteredTasks = tasks;
     }
     filteredTasks = filteredTasks.sort(sortTasks);
+    let sprintItem = filteredTasks.filter(t => t.type === 'sprint').length - 1;
     const [startDate, endDate] = ganttDateRange(
       filteredTasks,
       viewMode,
@@ -139,7 +141,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         projectBackgroundColor,
         projectBackgroundSelectedColor,
         milestoneBackgroundColor,
-        milestoneBackgroundSelectedColor
+        milestoneBackgroundSelectedColor,
+        sprintItem,
       )
     );
   }, [
@@ -288,6 +291,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       passive: false,
     });
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       wrapperRef.current?.removeEventListener("wheel", handleWheel);
     };
   }, [
@@ -394,6 +398,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     rowHeight,
     dates: dateSetup.dates,
     todayColor,
+    weekendColor,
+    currentView: viewMode,
     rtl,
   };
   const calendarProps: CalendarProps = {
@@ -482,6 +488,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
             TooltipContent={TooltipContent}
             rtl={rtl}
             svgWidth={svgWidth}
+            sprintItems={barProps.tasks.filter(task => task.type === "sprint").length}
           />
         )}
         <VerticalScroll

@@ -1,5 +1,5 @@
 .barLabel {
-  fill: #fff;
+  fill: #000000;
   text-anchor: middle;
   font-weight: lighter;
   dominant-baseline: central;
@@ -12,6 +12,17 @@
 }
 
 .barLabelOutside {
+  fill: #555;
+  text-anchor: start;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.barLabelOutsideSprint {
   fill: #555;
   text-anchor: start;
   -webkit-touch-callout: none;

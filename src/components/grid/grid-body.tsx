@@ -1,5 +1,5 @@
 import React, { ReactChild } from "react";
-import { Task } from "../../types/public-types";
+import { Task, ViewMode } from "../../types/public-types";
 import { addToDate } from "../../helpers/date-helper";
 import styles from "./grid.module.css";
 
@@ -10,6 +10,8 @@ export type GridBodyProps = {
   rowHeight: number;
   columnWidth: number;
   todayColor: string;
+  weekendColor: string;
+  currentView: ViewMode;
   rtl: boolean;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
@@ -19,6 +21,8 @@ export const GridBody: React.FC<GridBodyProps> = ({
   svgWidth,
   columnWidth,
   todayColor,
+  weekendColor,
+  currentView,
   rtl,
 }) => {
   let y = 0;
@@ -33,7 +37,28 @@ export const GridBody: React.FC<GridBodyProps> = ({
       className={styles.gridRowLine}
     />,
   ];
-  for (const task of tasks) {
+  gridRows.push(
+    <rect
+      key={"Row sprint"}
+      x="0"
+      y={y}
+      width={svgWidth}
+      height={22}
+      className={styles.gridRow}
+    />
+  );
+  rowLines.push(
+    <line
+      key={"RowLine sprint"}
+      x="0"
+      y1={y + 22}
+      x2={svgWidth}
+      y2={y + 22}
+      className={styles.gridRowLine}
+    />
+  );
+  y += 22;
+  for (const task of tasks.filter((t) => t.type !== 'sprint')) {
     gridRows.push(
       <rect
         key={"Row" + task.id}
@@ -60,6 +85,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   const now = new Date();
   let tickX = 0;
   const ticks: ReactChild[] = [];
+  const weekends: ReactChild[] = [];
   let today: ReactChild = <rect />;
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
@@ -73,6 +99,20 @@ export const GridBody: React.FC<GridBodyProps> = ({
         className={styles.gridTick}
       />
     );
+
+    if (weekendColor !== "transparent" && currentView !== ViewMode.Month && dates[i + 1] && [0, 6].includes(dates[i + 1].getDay())) {
+      weekends.push(
+        <rect
+          key={"WeekendColumn" + i}
+          x={tickX + columnWidth}
+          y={0}
+          width={columnWidth}
+          height={y}
+          fill={weekendColor}
+        />
+      );
+    }
+
     if (
       (i + 1 !== dates.length &&
         date.getTime() < now.getTime() &&
@@ -121,6 +161,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
       <g className="rows">{gridRows}</g>
       <g className="rowLines">{rowLines}</g>
       <g className="ticks">{ticks}</g>
+      <g className="weekends">{weekends}</g>
       <g className="today">{today}</g>
     </g>
   );

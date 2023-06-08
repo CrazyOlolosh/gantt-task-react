@@ -5,9 +5,10 @@ import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
 import { Milestone } from "./milestone/milestone";
 import { Project } from "./project/project";
+import { Sprint } from "./sprint/sprint";
 import style from "./task-list.module.css";
 
-export type TaskItemProps = {
+export type TaskISprintrops = {
   task: BarTask;
   arrowIndent: number;
   taskHeight: number;
@@ -23,7 +24,7 @@ export type TaskItemProps = {
   ) => any;
 };
 
-export const TaskItem: React.FC<TaskItemProps> = props => {
+export const SprintItem: React.FC<TaskISprintrops> = props => {
   const {
     task,
     arrowIndent,
@@ -36,22 +37,16 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
     ...props,
   };
   const textRef = useRef<SVGTextElement>(null);
-  const [taskItem, setTaskItem] = useState<JSX.Element>(<div />);
+  const [sprintItem, setSprintItem] = useState<JSX.Element>(<div />);
   const [isTextInside, setIsTextInside] = useState(true);
 
   useEffect(() => {
     switch (task.typeInternal) {
-      case "milestone":
-        setTaskItem(<Milestone {...props} />);
-        break;
-      case "project":
-        setTaskItem(<Project {...props} />);
-        break;
-      case "smalltask":
-        setTaskItem(<BarSmall {...props} />);
+      case "sprint":
+        setSprintItem(<Sprint {...props} />);
         break;
       default:
-        setTaskItem(<Bar {...props} />);
+        setSprintItem(<Bar {...props} />);
         break;
     }
   }, [task, isSelected]);
@@ -64,7 +59,7 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
 
   const getX = () => {
     const width = task.x2 - task.x1;
-    const hasChild = task.barChildren.length > 0 || task.sys_tied?.length > 0;
+    const hasChild = task.barChildren.length > 0;
     if (isTextInside) {
       return task.x1 + width * 0.5;
     }
@@ -79,44 +74,19 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
       return task.x1 + width + arrowIndent * + hasChild + arrowIndent * 0.2;
     }
   };
+  
 
   return (
     <g
-      onKeyDown={e => {
-        switch (e.key) {
-          case "Delete": {
-            if (isDelete) onEventStart("delete", task, e);
-            break;
-          }
-        }
-        e.stopPropagation();
-      }}
-      onMouseEnter={e => {
-        if (task.type !== 'sprint') {
-          onEventStart("mouseenter", task, e);
-        }
-      }}
-      onMouseLeave={e => {
-        onEventStart("mouseleave", task, e);
-      }}
-      onDoubleClick={e => {
-        onEventStart("dblclick", task, e);
-      }}
-      onClick={e => {
-        onEventStart("click", task, e);
-      }}
-      onFocus={() => {
-        onEventStart("select", task);
-      }}
     >
-      {taskItem}
+      {sprintItem}
       <text
         x={getX()}
-        y={task.y - 30 + taskHeight * 0.5}
+        y={10}
         className={
           isTextInside
             ? style.barLabel
-            : style.barLabel && style.barLabelOutside
+            : style.barLabel && style.barLabelOutsideSprint
         }
         ref={textRef}
       >

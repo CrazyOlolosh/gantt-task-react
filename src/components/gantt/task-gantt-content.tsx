@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { EventOption } from "../../types/public-types";
 import { BarTask } from "../../types/bar-task";
-import { Arrow } from "../other/arrow";
+import { Arrow, DoubleArrow } from "../other/arrow";
 import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
 import { isKeyboardEvent } from "../../helpers/other-helper";
 import { TaskItem } from "../task-item/task-item";
+import { SprintItem } from "../task-item/sprint-item";
 import {
   BarMoveAction,
   GanttContentMoveAction,
@@ -262,11 +263,31 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
   return (
     <g className="content">
-      <g className="arrows" fill={arrowColor} stroke={arrowColor}>
-        {tasks.map(task => {
-          return task.barChildren.map(child => {
-            return (
-              <Arrow
+
+      <g className="sprints" fontSize={fontSize}>
+        {tasks.filter(t => t.type === 'sprint').map(task => {
+          return (
+            <SprintItem
+              task={task}
+              arrowIndent={arrowIndent}
+              taskHeight={20}
+              isProgressChangeable={!!onProgressChange && !task.isDisabled}
+              isDateChangeable={!!onDateChange && !task.isDisabled}
+              isDelete={!task.isDisabled}
+              onEventStart={handleBarEventStart}
+              key={task.id}
+              isSelected={!!selectedTask && task.id === selectedTask.id}
+              rtl={rtl}
+            />
+          );
+        })}
+      </g>
+
+      {tasks.map(task => {
+        return task.barChildren.map(child => {
+          return (
+            <g key={`Arrow wrapper from ${task.id} to ${tasks[child.index].id}`} className="arrows" fill={arrowColor} stroke={arrowColor}>
+              <DoubleArrow
                 key={`Arrow from ${task.id} to ${tasks[child.index].id}`}
                 taskFrom={task}
                 taskTo={tasks[child.index]}
@@ -275,12 +296,37 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                 arrowIndent={arrowIndent}
                 rtl={rtl}
               />
+            </g>
+          );
+        });
+      })}
+
+      {/* Iterate through tasks and draw red arrows for tie_type 'blocking' */}
+      {tasks.map(task => {
+        if (task.sys_tied) {
+          const blockingTiedTasks = task.sys_tied.filter(tie => tie.tie_type === 'blocking' && tasks.find(child => child.sys_id === tie.task));
+          return blockingTiedTasks.map(tie => {
+            const tiedTask = tasks.find(child => child.sys_id === tie.task);
+            return (
+              <g key={`Blocking Arrow wrapper from ${task.id} to ${tiedTask?.id}`} className="arrows" fill="#ff0000" stroke="#ff0000">
+                <Arrow
+                  key={`Blocking Arrow from ${task.id} to ${tiedTask?.id}`}
+                  taskFrom={task}
+                  taskTo={tiedTask}
+                  rowHeight={rowHeight}
+                  taskHeight={taskHeight}
+                  arrowIndent={arrowIndent}
+                  rtl={rtl}
+                />
+              </g>
             );
           });
-        })}
-      </g>
-      <g className="bar" fontFamily={fontFamily} fontSize={fontSize}>
-        {tasks.map(task => {
+        }
+        return null;
+      })}
+
+      <g className="bar" fontSize={fontSize} >
+        {tasks.filter(t => t.type !== 'sprint').map(task => {
           return (
             <TaskItem
               task={task}

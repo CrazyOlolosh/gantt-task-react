@@ -13,19 +13,19 @@ export const Project: React.FC<TaskItemProps> = ({ task, isSelected }) => {
 
   const projectLeftTriangle = [
     task.x1,
-    task.y + task.height / 2 - 1,
+    task.y - 30 + task.height / 2 - 1,
     task.x1,
-    task.y + task.height,
+    task.y - 30 + task.height,
     task.x1 + 15,
-    task.y + task.height / 2 - 1,
+    task.y - 30 + task.height / 2 - 1,
   ].join(",");
   const projectRightTriangle = [
     task.x2,
-    task.y + task.height / 2 - 1,
+    task.y - 30 + task.height / 2 - 1,
     task.x2,
-    task.y + task.height,
+    task.y - 30 + task.height,
     task.x2 - 15,
-    task.y + task.height / 2 - 1,
+    task.y - 30 + task.height / 2 - 1,
   ].join(",");
 
   return (
@@ -34,7 +34,7 @@ export const Project: React.FC<TaskItemProps> = ({ task, isSelected }) => {
         fill={barColor}
         x={task.x1}
         width={projectWith}
-        y={task.y}
+        y={task.y - 30}
         height={task.height}
         rx={task.barCornerRadius}
         ry={task.barCornerRadius}
@@ -43,7 +43,7 @@ export const Project: React.FC<TaskItemProps> = ({ task, isSelected }) => {
       <rect
         x={task.progressX}
         width={task.progressWidth}
-        y={task.y}
+        y={task.y - 30}
         height={task.height}
         ry={task.barCornerRadius}
         rx={task.barCornerRadius}
@@ -53,7 +53,7 @@ export const Project: React.FC<TaskItemProps> = ({ task, isSelected }) => {
         fill={barColor}
         x={task.x1}
         width={projectWith}
-        y={task.y}
+        y={task.y - 30}
         height={task.height / 2}
         rx={task.barCornerRadius}
         ry={task.barCornerRadius}

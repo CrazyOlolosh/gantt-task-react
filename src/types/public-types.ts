@@ -9,7 +9,7 @@ export enum ViewMode {
   QuarterYear = "QuarterYear",
   Year = "Year",
 }
-export type TaskType = "task" | "milestone" | "project";
+export type TaskType = "task" | "milestone" | "project" | "sprint";
 export interface Task {
   id: string;
   type: TaskType;
@@ -31,6 +31,11 @@ export interface Task {
   dependencies?: string[];
   hideChildren?: boolean;
   displayOrder?: number;
+  sys_type: number;
+  sys_id: number;
+  sys_parent?: string;
+  sys_tied?: [tie_type: string, task: number];
+  level?: number;
 }
 
 export interface EventOption {
@@ -113,6 +118,7 @@ export interface StylingOption {
   arrowColor?: string;
   arrowIndent?: number;
   todayColor?: string;
+  weekendColor?: string;
   TooltipContent?: React.FC<{
     task: Task;
     fontSize: string;
